@@ -94,12 +94,11 @@ path = mpath.Path(path_pol, codes)
 
 kara_sic = np.zeros(448*304)
 
-p_lons = []
-for i in range(len(points)):
-    #print i
-    print i, pSIC(points[i][0],points[i][1], inverse = True)
-    #lo,la = pSIC(points[i][0],points[i][1], inverse = True)
-    #p_lons.append(lo)
+c = path.contains_point((points[76200][0],points[76200][1]))
+
+#for i in range(len(points)):
+76200 in range(len(points))
+for i in np.array([76200,76201,76202]):
     c = path.contains_point((points[i][0],points[i][1]))
     if c == 1:
         print 'IN'
@@ -153,6 +152,6 @@ ax.set_ylim(0,2500000)
 plt.show()
 
 
-#LIMIT_Kara = [70.,56.,78.,88.]
-#la_reg = np.where((lats>LIMIT_Kara[0])&(lats<LIMIT_Kara[2]))
-#lo_reg = np.where((lons>LIMIT_Kara[1])&(lons<LIMIT_Kara[3]))
+LIMIT_Kara = [70.,56.,78.,88.]
+la_reg = np.where((lats>LIMIT_Kara[0])&(lats<LIMIT_Kara[2]))
+lo_reg = np.where((lons>LIMIT_Kara[1])&(lons<LIMIT_Kara[3]))
