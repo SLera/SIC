@@ -7,10 +7,14 @@ Created on Mon Jan 30 18:08:04 2017
 from struct import unpack
 import ogr, os, sys
 import numpy as np
+
+import matplotlib
+matplotlib.use('qt5agg')
+
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import matplotlib.nxutils as nx
+#import matplotlib.nxutils as nx
 import pyproj
 
 
@@ -63,18 +67,28 @@ def create_grid_SIC_25km():
     lats = np.array(lats)
     lons = np.array(lons)
     return lats, lons, pr, xx, yy       
-     
+
+def SIC_grid(FILENAME):
+    ns = 448 * 304  # for reading data
+    f = open(FILENAME, 'rb')
+    data = f.read(2 * ns)
+    f.close()
+    unpacked_bytes = unpack("<%sH" % ns, data)
+    ice_inf = np.array(unpacked_bytes).reshape(448, 304)
+    return ice_inf
      
 filename =  'bt_197811_n07_v02_n.bin'
 
 lats, lons, pr, xx, yy = create_grid_SIC_25km()
+arctic_sic = SIC_grid(filename)
+arctic_sic_fl = arctic_sic.flatten()
      
 #def SIC_grid(FILENAME, xx,yy):
 x = xx.flatten()
 y = yy.flatten()
 points = np.vstack((x,y)).T #coords of grid in SIC projection
 
-all_verts, p = read_Kara_polygon('D:\\GIS\\temp\\KaraSea_polygon_WGS84.shp')
+all_verts, p = read_Kara_polygon('KaraSea_polygon_WGS84.shp')
 #transform lats, lons to sic projection to compare
 pSIC = pyproj.Proj("+proj=stere +lat_0=90 +lat_ts=70 +lon_0=-45 +a=6378273 +b=6356889.449 +units=m +no_defs")
 pSHP=pyproj.Proj(p)
@@ -96,13 +110,13 @@ kara_sic = np.zeros(448*304)
 
 c = path.contains_point((points[76200][0],points[76200][1]))
 
-#for i in range(len(points)):
-76200 in range(len(points))
-for i in np.array([76200,76201,76202]):
+for i in range(len(points)):
+#76200 in range(len(points))
+#for i in np.array([76200,76201,76202]):
     c = path.contains_point((points[i][0],points[i][1]))
     if c == 1:
         print 'IN'
-        kara_sic[i]=kara_sic[i]
+        kara_sic[i]=arctic_sic_fl[i]
 kara_sic = kara_sic.reshape(448,304)
 
 plt.figure()
