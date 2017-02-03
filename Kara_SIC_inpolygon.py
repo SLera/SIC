@@ -8,8 +8,8 @@ from struct import unpack
 import ogr, os, sys
 import numpy as np
 
-import matplotlib
-matplotlib.use('qt5agg')
+#import matplotlib
+#matplotlib.use('qt5agg')
 
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
@@ -56,7 +56,7 @@ def create_grid_SIC_25km():
     #grid cell in m
     a = 25000
     x = np.arange(-3850000,3750000,a)
-    y = np.arange(-5350000,5850000,a)
+    y = np.arange(5850000,-5350000,-a)
     xx,yy = np.meshgrid(x,y)
     lats=[]
     lons=[]
@@ -83,7 +83,7 @@ lats, lons, pr, xx, yy = create_grid_SIC_25km()
 arctic_sic = SIC_grid(filename)
 arctic_sic_fl = arctic_sic.flatten()
      
-#def SIC_grid(FILENAME, xx,yy):
+#def SIC_KARA(FILENAME, xx,yy):
 x = xx.flatten()
 y = yy.flatten()
 points = np.vstack((x,y)).T #coords of grid in SIC projection
@@ -107,65 +107,37 @@ codes[-1] =  mpath.Path.CLOSEPOLY
 path = mpath.Path(path_pol, codes)
 
 kara_sic = np.zeros(448*304)
+kara_sic.fill(1500)
 
-c = path.contains_point((points[76200][0],points[76200][1]))
+#c = path.contains_point((points[76200][0],points[76200][1]))
 
 for i in range(len(points)):
 #76200 in range(len(points))
 #for i in np.array([76200,76201,76202]):
     c = path.contains_point((points[i][0],points[i][1]))
     if c == 1:
-        print 'IN'
+        #print 'IN'
         kara_sic[i]=arctic_sic_fl[i]
+        print i
 kara_sic = kara_sic.reshape(448,304)
 
-plt.figure()
-plt.imshow(kara_sic)
-plt.show()
-          
-#for i in range(len(all_verts)):
-#    #print i
-#    for j in range(int(len(points)-1)):
-#        grid_point = points[j]
-#        print grid_point
-#        
-#        c = nx.pnpoly(grid_point[0],grid_point[1], all_verts[i])
-#        if c == 1:
-#            kara_sic[j]=kara_sic[j]
-#
-#kara_sic = kara_sic.reshape(448,304)
-#    
-#    #return kara_sic
-#    
-##filename =  'bt_197811_n07_v02_n.bin'
+kara_sic.dump('kara sic')
+#plt.figure()
+#plt.imshow(kara_sic)
+#plt.show()
+       
+
 ##
-##lats, lons, pr, xx, yy = create_grid_SIC_25km()
+#import matplotlib.patches as patches
+#fig = plt.figure()
+#ax = fig.add_subplot(111)
+#patch = patches.PathPatch(path, facecolor='orange', lw=2)
+#ax.add_patch(patch)
+#ax.set_xlim(0,2500000)
+#ax.set_ylim(0,2500000)
+#plt.show()
 #
-##kara_sic = SIC_grid(filename, xx,yy)
 #
-#pol = all_verts[0]
-#path_pol = []
-#codes = []
-#for i in range(len(pol)):
-#    a = (pol[i][0], pol[i][1])
-#    a = pyproj.transform(pSHP,pSIC,pol[i][0],pol[i][1])
-#    path_pol.append(a)
-#    codes.append(mpath.Path.LINETO)
-#codes[0] =  mpath.Path.MOVETO
-#codes[-1] =  mpath.Path.CLOSEPOLY
-#
-#path = mpath.Path(path_pol, codes)
-#
-import matplotlib.patches as patches
-fig = plt.figure()
-ax = fig.add_subplot(111)
-patch = patches.PathPatch(path, facecolor='orange', lw=2)
-ax.add_patch(patch)
-ax.set_xlim(0,2500000)
-ax.set_ylim(0,2500000)
-plt.show()
-
-
-LIMIT_Kara = [70.,56.,78.,88.]
-la_reg = np.where((lats>LIMIT_Kara[0])&(lats<LIMIT_Kara[2]))
-lo_reg = np.where((lons>LIMIT_Kara[1])&(lons<LIMIT_Kara[3]))
+#LIMIT_Kara = [70.,56.,78.,88.]
+#la_reg = np.where((lats>LIMIT_Kara[0])&(lats<LIMIT_Kara[2]))
+#lo_reg = np.where((lons>LIMIT_Kara[1])&(lons<LIMIT_Kara[3]))
